@@ -23,3 +23,4 @@ struct Atlas {
 
 Atlas create_atlas(VulkanDevice& vkdev, GPU& gpu, const char* binary_path);
 void destroy_atlas(VulkanDevice& vkdev, Atlas& atlas);
+

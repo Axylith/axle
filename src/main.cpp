@@ -15,6 +15,7 @@
 #include "editor.h"
 #include "metrics.h"
 #include <clocale>
+#include <sys/select.h>
 
 
 static jmp_buf x_error_jmp;
@@ -32,7 +33,8 @@ static void render_and_sync(VulkanState& vk, AppWindow& app, const AxylFont& fon
     render_frame(vk.renderer, vk.vkdev, vk.swapchain, vk.pipeline,
                  vk.text, vk.atlas, vk.solid, font, editor, ox, oy);
     if (app.sync_pending) {
-        vkDeviceWaitIdle(vk.vkdev.device);
+        vkWaitForFences(vk.vkdev.device, 1, &vk.renderer.in_flight,
+                        VK_TRUE, UINT64_MAX);
         XSyncSetCounter(app.display, app.sync_counter, app.sync_value);
         app.sync_pending = false;
         XFlush(app.display);
@@ -485,7 +487,17 @@ int main(int argc, char** argv){
         }
 
         if (!vk.ready) {
-            usleep(16000);
+            XFlush(app.display);
+                int xfd = ConnectionNumber(app.display);
+                fd_set fds;
+                FD_ZERO(&fds);
+                FD_SET(xfd, &fds);
+                if (metrics.visible) {
+                    struct timeval tv = { 0, 500000 };
+                    select(xfd + 1, &fds, nullptr, nullptr, &tv);
+                } else {
+                    select(xfd + 1, &fds, nullptr, nullptr, nullptr);
+                }
         } else {
             if (vk.swapchain_dirty) {
                 recreate_swapchain(vk, app);
@@ -499,7 +511,7 @@ int main(int argc, char** argv){
 
                 double t= monitor_timer.elapsed_ms();
 
-                if(t - last_hud_redraw_ms >= 50){
+                if(t - last_hud_redraw_ms >= 10){
                     needs_redraw = true;
                     last_hud_redraw_ms = t;
                 }
@@ -511,7 +523,17 @@ int main(int argc, char** argv){
                     vk.renderer.swapchain_dirty_local = false;
                 }
             } else {
-                usleep(8000);
+                XFlush(app.display);
+                int xfd = ConnectionNumber(app.display);
+                fd_set fds;
+                FD_ZERO(&fds);
+                FD_SET(xfd, &fds);
+                if (metrics.visible) {
+                    struct timeval tv = { 0, 500000 };
+                    select(xfd + 1, &fds, nullptr, nullptr, &tv);
+                } else {
+                    select(xfd + 1, &fds, nullptr, nullptr, nullptr);
+                }
             }
             //render_and_sync(vk, app, font, editor, text_origin_x, text_origin_y);
         }

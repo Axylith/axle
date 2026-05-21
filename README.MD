@@ -2,9 +2,9 @@
 
 # Axylith
 
-**A native research notebook. Single C++ binary. No Electron, no telemetry, no license server.**
+A native research environment for code, prose, data, and 3D geometry in one surface.
 
-[Documentation](https://docs.axylith.com) · [File Format](https://docs.axylith.com/format) · [Strategy](https://github.com/Axylith/axle/blob/development/changelog.md) · [Sponsor](https://github.com/sponsors/Axylith)
+[Documentation](https://docs.axylith.com) · [File Format](https://docs.axylith.com/format) · [Roadmap](https://github.com/Axylith/axle/blob/development/changelog.md)
 
 [![CI](https://github.com/Axylith/axle/actions/workflows/ci.yml/badge.svg)](https://github.com/Axylith/axle/actions/workflows/ci.yml)
 [![Sanitizers](https://github.com/Axylith/axle/actions/workflows/sanitizers.yml/badge.svg)](https://github.com/Axylith/axle/actions/workflows/sanitizers.yml)
@@ -16,36 +16,40 @@
 
 ---
 
-Axylith is a research notebook implemented as a single native binary. The current build is a text editor with multi-line input, cursor movement, atomic save/load to a versioned file format, MTSDF text rendering through Vulkan 1.3, and a real-time HUD for input and frame latency.
+## What this is
 
-The eventual goal — described in the [strategy document](https://github.com/Axylith/axle/blob/development/changelog.md) — is a computational research workbench that combines notes, deterministic numeric evaluation, physics simulation, and locally-run AI annotation. That product does not exist yet. This repository is the starting point.
+Axylith is an early-stage project working toward a single-binary research environment where prose, code, data, and 3D geometry share state and where an integrated AI can reason about all of them. The current build is the substrate: a text editor with multi-line input, cursor movement, save/load to a custom file format, and Vulkan-based text rendering.
+
+The longer-term goal is described in the [roadmap](https://github.com/Axylith/axle/blob/development/changelog.md). That product does not exist yet. This repository is the foundation being built first.
 
 ## Status
 
-> **Pre-V1.** The editor is usable for typing, navigating, and saving plain UTF-8 text. None of the higher-level features (computation, physics, AI) have been implemented.
+> **Pre-V1.** The editor is functional for typing, navigating, and saving plain UTF-8 text. The notebook execution, 3D capabilities, and AI integration described in the roadmap have not been implemented.
 
-What currently works:
+What works today:
 
-- Multi-line text editor with full cursor movement (arrows, Home/End, vertical navigation)
-- UTF-8 input via X11 input methods (correct Shift, AltGr, dead-key, and multibyte handling)
-- Atomic save and load through a 16-byte-headered `.axl` format, with plain-text fallback for any other UTF-8 file
-- MTSDF text rendering via a custom Vulkan 1.3 pipeline — resolution-independent, sub-pixel-accurate
-- On-screen HUD showing live frame time and keystroke-to-submit input latency
-- CI matrix across GCC 12, GCC 13, and Clang 17, with AddressSanitizer, UBSan, ThreadSanitizer, CodeQL, and static analysis on every push
+- Multi-line text editor with cursor movement (arrows, Home/End, vertical navigation, word jumping, selection)
+- UTF-8 input via X11 input methods, with Shift, AltGr, dead-key, and multibyte handling
+- Save and load through a 16-byte-headered `.axl` format; plain-text files load as fallback
+- Text rendering through a Vulkan 1.3 MTSDF pipeline (resolution-independent)
+- A toggleable on-screen HUD that displays measured frame time and keystroke-to-submit input latency
+- Configurable keybindings via a small config file (see `axylith.keys.example`)
+- Undo/redo and internal clipboard with Ctrl+Z / Ctrl+Y / Ctrl+C / Ctrl+X / Ctrl+V
+- CI matrix across GCC 12, GCC 13, and Clang 17, with AddressSanitizer, UBSan, ThreadSanitizer, and CodeQL
 
-What is deliberately not yet implemented:
+What is on the roadmap but not yet implemented:
 
-- Text selection · scroll viewport · mouse positioning · line wrap · find/replace · syntax highlighting
-- The computational layer (FP64 evaluator, symbolic math)
-- The physics engine
-- Local AI inference
-- Wayland, macOS, and Windows backends (Linux/X11 only for now)
+- File-open overlay, find/replace, scroll viewport polish, line wrap, syntax highlighting
+- Document-as-program execution model (embedded Python interpreter, shared scope across code regions)
+- Mesh loading, viewport rendering, and AI-driven geometric operations
+- Integrated AI sidebar with structured-output reasoning, not just chat
+- Wayland, macOS, and Windows backends (currently Linux/X11 only)
 
-The roadmap to V1 is in the [strategy document](https://github.com/Axylith/axle/blob/development/changelog.md).
+The full roadmap is in the [changelog](https://github.com/Axylith/axle/blob/development/changelog.md).
 
 ## Build
 
-Linux only at present. Verified on Ubuntu 24.04, Arch, and Fedora.
+Linux only at present. Tested on Ubuntu 24.04, Arch, and Fedora.
 
 ```bash
 git clone https://github.com/Axylith/axle.git
@@ -65,7 +69,7 @@ sudo apt install -y \
     glslc
 ```
 
-For Arch and Fedora equivalents, plus a 5-minute walkthrough including first save and load, see [docs/quickstart](https://docs.axylith.com/quickstart).
+For Arch and Fedora equivalents and a walkthrough of first save/load, see [docs/quickstart](https://docs.axylith.com/quickstart).
 
 ## Tests
 
@@ -74,17 +78,17 @@ cd build
 ctest --output-on-failure
 ```
 
-The test suite exercises the on-disk format. Sanitizers run in CI on every push.
+The current suite covers the on-disk format and the input command layer. Sanitizers run in CI on every push.
 
-## Design principles
+## Project constraints
 
-These are the constraints the project has committed to. They are intended as load-bearing — features that violate them won't be merged.
+These are the constraints the project tries to hold itself to. They reflect choices about what kind of tool Axylith should be, not claims that they are universally correct.
 
-- **One native binary.** No Electron, no embedded browser, no JavaScript runtime. The build produces a stripped ELF measured in megabytes.
-- **One external dependency.** `stb_truetype.h`, header-only. Everything else (Vulkan, X11, libc) is a system library.
-- **Local-first.** Files on disk are the source of truth. No cloud account is required to use any feature. Network access is opt-in, never default.
-- **Plain UTF-8 with a small header.** The `.axl` format is readable in `cat`, diffable in `git`, recoverable without Axylith installed. Compression and encryption are not in v1.
-- **Honest latency.** Input latency and frame time are displayed in the HUD by code anyone can read. Numbers are measured, not estimated.
+- **Single native binary.** No bundled browser, no JavaScript runtime, no Electron. The intent is a smaller install footprint and lower memory baseline; the tradeoff is more work per platform and fewer ready-made UI libraries.
+- **Minimal external dependencies.** Currently `stb_truetype.h` (header-only) plus system libraries (Vulkan, X11, libc). An embedded Python interpreter will likely be added when the notebook execution layer ships, which will relax this constraint in a documented way.
+- **Local-first by default.** Files on disk are the source of truth. No account is required to use any feature. Network features will be opt-in when they exist.
+- **Readable file format.** `.axl` files are mostly plain UTF-8 behind a small binary header, and can be opened with `cat` or examined with `od`. Encryption and compression are not in V1.
+- **Measured, displayed latency.** Input latency and frame time are shown in the HUD by code in the repository. The intent is for these numbers to be auditable, not asserted.
 
 ## File format
 
@@ -98,34 +102,24 @@ $ tail -c +17 untitled.axl
 hello world
 ```
 
-A v2 structured format (`AXLE` magic, 32-byte header) is specified and unit-tested but not yet emitted by the editor. Readers will support both before writers switch.
+A V2 structured format (`AXLE` magic, 32-byte header) is specified and unit-tested but not yet emitted by the editor. Readers will support both before writers switch.
 
 ## License
 
-Axylith is licensed under the [GNU Affero General Public License v3](LICENSE). The editor binary, the file format, and all included subsystems are free software.
+Axylith is licensed under the [GNU Affero General Public License v3](LICENSE). A commercial license will be available for organizations that cannot comply with AGPL; for now, please contact `founders@axylith.com` for inquiries.
 
-A commercial license is available for organizations that cannot comply with AGPL. Contact `founders@axylith.com`.
-
-The companion [physics engine repository](https://github.com/Axylith/axylith-physics) (when published) will use BSL-1.1 with a conversion to Apache-2.0. See the [strategy document](https://github.com/Axylith/axle/blob/development/changelog.md) for the full licensing rationale.
+The companion physics engine repository (when published) will use BSL-1.1 with a planned conversion to Apache-2.0. The full licensing rationale is in the [roadmap](https://github.com/Axylith/axle/blob/development/changelog.md).
 
 ## Contributing
 
-Contributions are welcome. The active development line is the `development` branch; `main` tracks released versions.
+This is a small project, currently maintained by one person. Contributions are welcome but the architecture is still in flux, so it may be worth opening an issue before significant work to make sure it fits the direction.
 
-Before opening a pull request, please read [CONTRIBUTING.md](CONTRIBUTING.MD) and the [Code of Conduct](CODE_OF_CONDUCT.MD). A CLA is required.
+Active development happens on the `development` branch; `main` tracks released versions. Before opening a pull request, please read [CONTRIBUTING.md](CONTRIBUTING.MD) and the [Code of Conduct](CODE_OF_CONDUCT.MD).
 
-First-time contributors: look for issues labeled `good first issue` or `mentored`.
+First-time contributors: issues labeled `good first issue` or `mentored` are reasonable starting points.
 
 ## Acknowledgements
 
-Axylith is built by [Dev Bhatt](https://devbhatt.dev) and contributors. The project uses font atlas data derived from [JetBrains Mono](https://www.jetbrains.com/lp/mono/) and the MTSDF baking technique described by Viktor Chlumský.
+Axylith is built by [Dev Bhatt](https://devbhatt.dev). The project uses font atlas data derived from [JetBrains Mono](https://www.jetbrains.com/lp/mono/) and the MTSDF baking technique described by Viktor Chlumský.
 
-CI infrastructure provided by [GitHub Actions](https://github.com/features/actions), [GitLab CI](https://about.gitlab.com/), and [CircleCI](https://circleci.com/). Static analysis by [SonarCloud](https://sonarcloud.io/), [DeepSource](https://deepsource.com/), [Snyk](https://snyk.io/), and [CodeQL](https://codeql.github.com/).
-
----
-
-<div align="center">
-
-If you find this project worth supporting, please consider [sponsoring](https://github.com/sponsors/Axylith) or becoming a backer on [Open Collective](https://opencollective.com/axylith).
-
-</div>
+CI infrastructure is provided by [GitHub Actions](https://github.com/features/actions), [GitLab CI](https://about.gitlab.com/), and [CircleCI](https://circleci.com/). Static analysis through [SonarCloud](https://sonarcloud.io/), [DeepSource](https://deepsource.com/), [Snyk](https://snyk.io/), and [CodeQL](https://codeql.github.com/).

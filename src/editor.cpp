@@ -7,7 +7,7 @@
 #include <errno.h>
 
 static constexpr size_t AXL_HEADER_LEN = 16;
-static const unsigned char AXL_MAGIC[4] = {'A', 'X', 'L', '\0'};
+static const unsigned char AXL_MAGIC[5] = {'A', 'X', 'L', '\0','\n'};
 
 void editor_ensure_data_dir(const Editor& e) {
     size_t slash = e.path.find_last_of('/');
