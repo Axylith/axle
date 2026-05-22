@@ -46,7 +46,7 @@ jobs:
         build_type: [Debug, Release, RelWithDebInfo]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Cache apt packages
         uses: actions/cache@v4
@@ -115,7 +115,7 @@ jobs:
             flags: "-fsanitize=thread -fno-omit-frame-pointer -g"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Cache apt packages
         uses: actions/cache@v4
