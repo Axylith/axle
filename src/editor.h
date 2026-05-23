@@ -1,8 +1,20 @@
 #pragma once
 #include <string>
+#include <vector>
 #include <chrono>
 
 enum class SaveFormat { Plain, Axl };
+
+// Coarse classification of a mutation, used only to coalesce undo history:
+// a run of consecutive same-kind edits collapses into one undo step, while a
+// change of kind (typing -> deleting) forms a boundary. Paste and selection
+// deletes are always their own step.
+enum class EditKind { Initial, Insert, Delete, Paste, DeleteSel };
+
+struct UndoState {
+    std::string text;
+    size_t      cursor = 0;
+};
 
 
 struct Editor {
@@ -17,7 +29,7 @@ struct Editor {
     bool   has_selection = false;
 
     std::string path = "../data/untitled.axl";
-    
+
     std::string status;
     std::chrono::steady_clock::time_point status_set;
 
@@ -25,6 +37,17 @@ struct Editor {
     std::chrono::steady_clock::time_point last_input;
     bool measure_pending = false;
     SaveFormat format = SaveFormat::Axl;
+
+    // Undo/redo history. Snapshots are full-buffer copies — fine for the
+    // 64MB-capped v1 editor; a piece table can replace this later without
+    // touching callers.
+    std::vector<UndoState> undo_stack;
+    std::vector<UndoState> redo_stack;
+    EditKind last_edit_kind = EditKind::Initial;
+
+    // Internal copy/cut/paste register. The X11 system selection is layered
+    // on top of this in a later step; this is the source of truth.
+    std::string clipboard;
 
 };
 
@@ -69,3 +92,25 @@ void editor_move_word_left(Editor& e);
 void editor_move_word_right(Editor& e);
 
 void editor_delete_word_left(Editor& e);
+void editor_delete_word_right(Editor& e);
+
+// --- Undo / redo ---
+// Call editor_record_edit() with the kind of the mutation that is ABOUT to
+// happen, before performing it. It snapshots the pre-edit buffer when the
+// edit starts a new undo step (kind boundary / paste / selection delete) and
+// drops the redo history. editor_undo/redo swap between the stacks.
+constexpr size_t EDITOR_UNDO_LIMIT = 256;
+void editor_record_edit(Editor& e, EditKind kind);
+bool editor_undo(Editor& e);
+bool editor_redo(Editor& e);
+
+// --- Clipboard ---
+// copy: selection -> clipboard (no buffer change). cut: copy then delete the
+// selection. paste: replace any selection with the clipboard contents.
+// All are no-ops where they would do nothing (e.g. copy with no selection).
+void editor_copy (Editor& e);
+void editor_cut  (Editor& e);
+void editor_paste(Editor& e);
+
+void editor_record_edit(Editor& e, EditKind kind);
+void editor_select_all(Editor& e);

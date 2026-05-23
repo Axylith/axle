@@ -1,16 +1,8 @@
 #pragma once
+#include <X11/Xlib.h>
+struct  Editor;
+struct Metrics;
+struct AppWindow;
 
-#include <vector>
-#include <cstdint>
-#include <string>
-
-struct Editor;
-
-using KeySymT = unsigned long;
-
-enum Mods : uint8_t {
-    MOD_NONE = 0,
-    MOD_CTRL = 1u << 0,
-    MOD_SHIFT = 1u << 0,
-}
+bool command_handle_key(KeySym keysym, unsigned int state, Editor& editor, Metrics& metrics, AppWindow& app, float viewport_top_px, float viewport_height_px, float line_height);
 

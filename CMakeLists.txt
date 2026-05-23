@@ -23,6 +23,7 @@ add_executable(axylith
     src/text.cpp
     src/editor.cpp
     src/solid.cpp
+    src/command.cpp
 
 
 )

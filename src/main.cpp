@@ -16,7 +16,9 @@
 #include "metrics.h"
 #include <clocale>
 #include <sys/select.h>
+#include <sys/stat.h>
 
+#include  "command.h"
 
 static jmp_buf x_error_jmp;
 static bool x_connection_lost = false;
@@ -54,10 +56,10 @@ int main(int argc, char** argv){
     Timer   frame_timer;
     float offset_x = 0.25; //0 = right border
     float offset_y = 0.20; //0 = top border
-    
+
     if (argc > 1) {
         editor.path = argv[1];
-        
+
     }
 
 
@@ -77,12 +79,12 @@ int main(int argc, char** argv){
     VkInstance instance = create_vulkan_instance();
     t.log("Vulkan instance"); fflush(stdout);
     if(instance == VK_NULL_HANDLE) return 1;
-    
+
 
     VkSurfaceKHR surface = create_surface(instance, app);
     t.log("Vulkan surface"); fflush(stdout);
     if(surface == VK_NULL_HANDLE) return 1;
-                
+
 
     ResourceMonitor monitor;
     monitor.open("axylith_resource.csv");
@@ -90,7 +92,7 @@ int main(int argc, char** argv){
     VulkanState vk;
     vk.instance = instance;
     vk.surface = surface;
-    
+
 
     std::thread init_thread([&vk, &app, &total]() {
         vk.gpu = pick_gpu(vk.instance, vk.surface);
@@ -113,7 +115,7 @@ int main(int argc, char** argv){
             vk.failed = true;
             return;
         }
-        
+
 
         // NEW: Create text pipeline
         vk.text = create_text_pipeline(vk.vkdev.device,
@@ -177,7 +179,7 @@ int main(int argc, char** argv){
         fflush(stdout);
         goto cleanup;
     }
-    
+
 
     while (app.running){
 
@@ -191,7 +193,7 @@ int main(int argc, char** argv){
         // Document height for scroll clamping.
         size_t line_count = 1;
         for (char c : editor.text) if (c == '\n') line_count++;
-        
+
         bool needs_redraw = editor.dirty || resize_pending;
         const float text_total_height_px = line_count * line_height;
         if (editor_get_status(editor, 3.0) != nullptr) needs_redraw = true;
@@ -203,132 +205,38 @@ int main(int argc, char** argv){
             XNextEvent(app.display, &ev);
 
             switch (ev.type){
-                case KeyPress: {
-                    char buf[64];
-                    KeySym keysym = 0;
-                    Status status = 0;
-                    int n = Xutf8LookupString(app.xic, &ev.xkey,
-                                              buf, sizeof(buf) - 1,
-                                              &keysym, &status);
-                    buf[n] = '\0';
+                case KeyPress:
+                    {
+                        char buf[64];
+                        KeySym keysym = 0;
+                        Status status = 0;
+                        int n = Xutf8LookupString(app.xic, &ev.xkey,
+                                                  buf, sizeof(buf) - 1,
+                                                  &keysym, &status);
+                        buf[n] = '\0';
 
-                    bool ctrl = (ev.xkey.state & ControlMask) != 0;
-                    bool handled = false;
+                        bool ctrl = (ev.xkey.state & ControlMask) != 0;
+                        bool handled = false;
 
-                    if (status == XLookupKeySym || status == XLookupBoth) {
-                        // Ctrl-modified shortcuts first
-                        if (ctrl) {
-                            bool shift = (ev.xkey.state & ShiftMask) != 0;
-                            switch (keysym) {
-                                case XK_s: case XK_S: editor_save(editor); handled = true; break;
-                                case XK_o: case XK_O: editor_load(editor); handled = true; break;
-                            
-                                case XK_Left:
-                                    if (shift) {
-                                        if (!editor.has_selection) editor.sel_anchor = editor.cursor;
-                                        editor_move_word_left(editor);
-                                        editor_select_to(editor, editor.cursor);
-                                    } else {
-                                        editor_clear_selection(editor);
-                                        editor_move_word_left(editor);
-                                    }
-                                    editor_scroll_to_cursor(editor, viewport_top_px, viewport_height_px, line_height);
-                                    handled = true; break;
-                                
-                                case XK_Right:
-                                    if (shift) {
-                                        if (!editor.has_selection) editor.sel_anchor = editor.cursor;
-                                        editor_move_word_right(editor);
-                                        editor_select_to(editor, editor.cursor);
-                                    } else {
-                                        editor_clear_selection(editor);
-                                        editor_move_word_right(editor);
-                                    }
-                                    editor_scroll_to_cursor(editor, viewport_top_px, viewport_height_px, line_height);
-                                    handled = true; break;
-                                
-                                case XK_BackSpace:
-                                    if (editor.has_selection) {
-                                        editor_delete_selection(editor);
-                                    } else {
-                                        editor_delete_word_left(editor);
-                                    }
-                                    editor_scroll_to_cursor(editor, viewport_top_px, viewport_height_px, line_height);
-                                    handled = true; break;
-                                
-                                default: break;
+                        if (status == XLookupKeySym || status == XLookupBoth)
+                        {
+                            handled = command_handle_key(keysym, ev.xkey.state, editor, metrics,app, viewport_top_px, viewport_height_px, line_height);
+                        }
+                        if (!handled && (status == XLookupChars || status == XLookupBoth)) {
+                            if (!ctrl) {
+                                if (editor.has_selection) {
+                                    editor_record_edit(editor, EditKind::DeleteSel);
+                                    editor_delete_selection(editor);
+                                } else {
+                                    editor_record_edit(editor, EditKind::Insert);
+                                }
+                                editor_insert_utf8(editor, buf, n);
+                                editor_scroll_to_cursor(editor, viewport_top_px, viewport_height_px, line_height);
                             }
                         }
 
-                        if (!handled) {
-                            switch (keysym) {
-                                case XK_Escape:    app.running = false;                       handled = true; break;
-                                case XK_BackSpace: 
-                                    if (editor.has_selection) {
-                                        editor_delete_selection(editor);
-                                    } else {
-                                        editor_backspace(editor);
-                                    }
-                                    editor_scroll_to_cursor(editor, viewport_top_px, viewport_height_px, line_height);
-                                    handled = true; break;
-                                case XK_Return:        
-                                    if (editor.has_selection) editor_delete_selection(editor);
-                                    editor_newline(editor);
-                                    editor_scroll_to_cursor(editor, viewport_top_px, viewport_height_px, line_height);         
-                                    handled = true; break;
-                                case XK_Tab:       editor_insert_utf8(editor, "\t", 1);       handled = true; break;
-                                case XK_F1:        metrics.visible = !metrics.visible;        handled = true; break;
-                                
-                                // --- Cursor movement ---
-                                case XK_Left: {      
-                                    bool shift = (ev.xkey.state & ShiftMask) != 0;
-                                    if (shift) {
-                                        if(!editor.has_selection) editor.sel_anchor = editor.cursor;
-                                        editor_move_left(editor);
-                                        editor_select_to(editor, editor.cursor);
-                                    } else {
-                                        editor_clear_selection(editor);
-                                        editor_move_left(editor);
-                                    }
-                                    editor_scroll_to_cursor(editor, viewport_top_px, viewport_height_px, line_height);
-                                    handled = true; break;
-                                }
-                                case XK_Right: {
-                                    bool shift = (ev.xkey.state & ShiftMask) != 0;
-                                    if (shift) {
-                                        if(!editor.has_selection) editor.sel_anchor = editor.cursor;
-                                        editor_move_right(editor);
-                                        editor_select_to(editor, editor.cursor);
-                                    } else {
-                                        editor_clear_selection(editor);
-                                        editor_move_right(editor);
-                                    }
-                                    editor_scroll_to_cursor(editor, viewport_top_px, viewport_height_px, line_height);
-     
-                                    handled = true; break;
-                                }
-                                case XK_Up:        editor_move_up(editor);                    handled = true; break;
-                                case XK_Down:      editor_move_down(editor);                  handled = true; break;
-                                case XK_Home:      editor_move_home(editor);                  handled = true; break;
-                                case XK_End:       editor_move_end(editor);                   handled = true; break;
-                                
-                                default: break;
-                            }
-                        }
+                        break;
                     }
-                    if (!handled && (status == XLookupChars || status == XLookupBoth)) {
-                        // Ctrl + letter would otherwise produce a control byte (e.g. ^S=0x13).
-                        // Suppress those — only insert printable chars when no ctrl held.
-                        if (!ctrl){
-                            if (editor.has_selection) editor_delete_selection(editor);
-                            editor_insert_utf8(editor, buf, n);
-                            editor_scroll_to_cursor(editor, viewport_top_px, viewport_height_px, line_height);
-                        }
-                    
-                    }
-                    break;
-                }
-                
                 case ButtonPress: {
                     if (ev.xbutton.button == Button4) {
                         editor_scroll_lines(editor, -3, line_height, viewport_top_px,
@@ -340,13 +248,13 @@ int main(int argc, char** argv){
                     break;
                 }
 
-                
+
                 case ClientMessage: {
                     printf("[x11] ClientMessage msg_type=%lu data[0]=%ld\n",
                            (unsigned long)ev.xclient.message_type,
                            (long)ev.xclient.data.l[0]);
                     fflush(stdout);
-                    
+
                     if (ev.xclient.message_type == app.wm_protocols) {
                         printf("[x11]   matched WM_PROTOCOLS, data[0]=%ld vs wm_delete=%lu\n",
                                (long)ev.xclient.data.l[0],
@@ -366,7 +274,7 @@ int main(int argc, char** argv){
                     break;
                 }
 
-                
+
 
                 case ConfigureNotify: {
                     if (ev.xconfigure.width != app.width || ev.xconfigure.height != app.height) {
@@ -406,7 +314,7 @@ int main(int argc, char** argv){
 
                 append_cursor_quad(vk.text, font, 0.784f, 0.608f, 0.353f, 1.0f);
             }
-        
+
             // Append HUD line at bottom, 14px, dimmed.
             if (metrics.visible) {
                 char hud[256];
@@ -428,18 +336,18 @@ int main(int argc, char** argv){
                 append_text_run(vk.text, font, title,
                                 12.0f, (float)app.height - 28.0f, 14.0f,
                                 0.545f, 0.518f, 0.478f, 0.9f);
-                
+
                 // Line 2 (below): perf metrics
                 append_text_run(vk.text, font, hud,
                                 12.0f, (float)app.height - 8.0f, 14.0f,
                                 0.545f, 0.518f, 0.478f, 0.9f);
-                
+
                 vk.text.pen_x      = saved_pen;
                 vk.text.baseline_y = saved_base;
                 vk.text.pixel_size = saved_size;
             }
         }
-        
+
         if (resize_pending) {
             double now = monitor_timer.elapsed_ms();
             if ((now - last_resize_time_ms) >= 50.0) {
