@@ -1,0 +1,40 @@
+name: Update progress badge
+
+on:
+  push:
+    branches: [main, development]
+    paths:
+      - 'roadmap.yml'
+      - 'tools/generate_progress.py'
+      - '.github/workflows/progress.yml'
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install deps
+        run: pip install pyyaml
+
+      - name: Generate badge
+        run: python tools/generate_progress.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [[ -n $(git status --porcelain .github/badges/) ]]; then
+            git add .github/badges/
+            git commit -m "chore: update V1 progress badge [skip ci]"
+            git push
+          else
+            echo "No badge changes."
+          fi

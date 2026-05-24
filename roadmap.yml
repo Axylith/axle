@@ -1,0 +1,21 @@
+features:
+  - name: "Text editor (multi-line, UTF-8)"
+    done: true
+  - name: "Undo / redo"
+    done: true
+  - name: "Clipboard"
+    done: true
+  - name: "Custom keybindings"
+    done: false
+  - name: "File-open overlay"
+    done: false
+  - name: "Find / replace"
+    done: false
+  - name: "Document-as-program execution (Python)"
+    done: false
+  - name: "3D mesh viewer"
+    done: false
+  - name: "AI integration sidebar"
+    done: false
+  - name: "Live native render reload"
+    done: false
