@@ -40,7 +40,7 @@ jobs:
         build_type: [Debug, Release, RelWithDebInfo]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up ccache
         uses: hendrikmuhs/ccache-action@v1.2
@@ -89,7 +89,7 @@ jobs:
             flags: "-fsanitize=thread -fno-omit-frame-pointer -g"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up ccache
         uses: hendrikmuhs/ccache-action@v1.2
