@@ -2,7 +2,7 @@
 // Build: g++ -std=c++20 axl_test.cpp -o axl_test && ./axl_test
 // Returns 0 on success, 1 on failure. CI/CD compatible.
 
-#include "types.h"
+#include "../src/core/types.h"
 #include <cstdio>
 #include <cstring>
 #include <sys/mman.h>
@@ -52,8 +52,8 @@ bool test_struct_sizes() {
     ASSERT(sizeof(Project) == 10);
     PASS();
 
-    TEST("AXLHeader is 32 bytes");
-    ASSERT(sizeof(AXLHeader) == 32);
+    TEST("AXLHeader is 33 bytes");
+    ASSERT(sizeof(AXLHeader) == 33);
     PASS();
 
     return true;

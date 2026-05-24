@@ -1,8 +1,50 @@
 .vscode\
 .vscode
 build
-tools
+tools/JetBrainsMono-2.304
+tools/msdf-atlas-gen
 fonts
 info.md
 axylith
 .github/synk.yml
+# IDE
+.vscode/
+.idea/
+
+# Build directories
+build/
+cmake-build-*/
+out/
+
+# Compiled binaries
+axylith
+axl_test
+editor_test
+
+# Compiled shaders (built by CMake, not source)
+shaders/*.spv
+
+# Runtime output
+axylith_resource.csv
+
+# Local data / test documents
+data/
+
+# Vendored third-party (heavy)
+tools/JetBrainsMono-2.304/
+tools/msdf-atlas-gen/
+
+# Local-only files
+info.md
+manifesto.md
+fonts/
+axylith.conf
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor backup files
+*~
+*.swp
+*.swo

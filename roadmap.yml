@@ -1,0 +1,30 @@
+# Axylith — V1 roadmap
+#
+# Source of truth for the progress badge in the README.
+# Edit this file when you complete (or add) a feature; the badge
+# regenerates automatically via .github/workflows/progress.yml.
+
+version: 1
+target: "First public release"
+
+features:
+  - name: "Text editor (multi-line, UTF-8, cursor)"
+    done: true
+  - name: "Save / load with .axl format"
+    done: true
+  - name: "Selection + word movement"
+    done: true
+  - name: "Undo / redo + clipboard"
+    done: true
+  - name: "Custom keybindings"
+    done: true
+  - name: "File-open overlay (folder navigation)"
+    done: false
+  - name: "Find / replace"
+    done: false
+  - name: "Notebook execution (embedded Python)"
+    done: false
+  - name: "3D mesh viewer"
+    done: false
+  - name: "AI integration sidebar"
+    done: false

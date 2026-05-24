@@ -50,7 +50,7 @@ static size_t utf8_prev(const std::string& s, size_t pos){
     if (pos == 0) return 0;
     do {pos--;} while (pos > 0 && ((unsigned char)s[pos] & 0xC0) == 0x80);
     return pos;
-    
+
 }
 
 static size_t utf8_next(const std::string& s, size_t pos){
@@ -149,6 +149,90 @@ void editor_move_down(Editor& e) {
     size_t next_len   = next_end - next_start;
     e.cursor = next_start + (col < next_len ? col : next_len);
     e.dirty = true;
+}
+
+static int char_class(unsigned char c) {
+    if (c == ' ' || c == '\t' || c == '\n' || c == '\r') return 0;
+    if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
+        (c >= '0' && c <= '9') || c == '_' || c >= 0x80) return 1;
+    return 2;
+}
+
+static size_t word_right(const std::string& s, size_t pos){
+    size_t n = s.size();
+    if (pos >= n) return n;
+
+    while (pos < n && char_class((unsigned char)s[pos]) == 0) pos = utf8_next(s, pos);
+    if (pos >= n) return n;
+
+    int cls = char_class((unsigned char)s[pos]);
+    while (pos < n && char_class((unsigned char)s[pos]) == cls)
+        pos = utf8_next(s, pos);
+
+    return pos;
+}
+
+static size_t word_left(const std::string& s, size_t pos) {
+    if (pos == 0) return 0;
+
+    // Step back over whitespace.
+    size_t p = utf8_prev(s, pos);
+    while (p > 0 && char_class((unsigned char)s[p]) == 0)
+        p = utf8_prev(s, p);
+
+    // If we're at the start, done.
+    if (p == 0 && char_class((unsigned char)s[p]) == 0) return 0;
+
+    // Skip the run of this class going left. Stop at the first char of it.
+    int cls = char_class((unsigned char)s[p]);
+    while (p > 0) {
+        size_t prev = utf8_prev(s, p);
+        if (char_class((unsigned char)s[prev]) != cls) break;
+        p = prev;
+    }
+    return p;
+}
+
+
+void editor_move_word_left(Editor& e){
+    if (e.cursor > e.text.size()) e.cursor = e.text.size();
+    if (e.cursor == 0) return;
+
+    e.cursor = word_left(e.text, e.cursor);
+    e.dirty = true;
+}
+
+void editor_move_word_right(Editor& e){
+    if (e.cursor > e.text.size()) e.cursor = e.text.size();
+    if (e.cursor >= e.text.size()) return;
+
+    e.cursor = word_right(e.text, e.cursor);
+    e.dirty = true;
+}
+
+void editor_delete_word_left(Editor& e){
+    if (e.cursor > e.text.size()) e.cursor = e.text.size();
+    if (e.cursor == 0) return;
+    size_t target = word_left(e.text, e.cursor);
+    if(target >= e.cursor) return;
+    e.last_input = std::chrono::steady_clock::now();
+    e.measure_pending = true;
+    e.text.erase(target, e.cursor - target);
+    e.cursor = target;
+    e.dirty = true;
+    e.modified = true;
+}
+
+void editor_delete_word_right(Editor& e){
+    if (e.cursor > e.text.size()) e.cursor = e.text.size();
+    if (e.cursor >= e.text.size()) return;
+    size_t target = word_right(e.text, e.cursor);
+    if (target <= e.cursor) return;
+    e.last_input = std::chrono::steady_clock::now();
+    e.measure_pending = true;
+    e.text.erase(e.cursor, target - e.cursor);
+    e.dirty = true;
+    e.modified = true;
 }
 
 void editor_clear_selection(Editor& e) {
@@ -284,13 +368,18 @@ bool editor_save(Editor &e){
         return false;
     }
 
-    unsigned char header[AXL_HEADER_LEN] = {0};
-    memcpy(header, AXL_MAGIC, 4);
-    header[4] = 1;
-    header[5] = 0;
+    ssize_t wrote;
 
-    ssize_t wrote = write(fd, header, AXL_HEADER_LEN);
-    if (wrote != (ssize_t)AXL_HEADER_LEN) goto write_err;
+    if (e.path.size() >= 4 && e.path.compare(e.path.size() - 4, 4, ".axl") == 0){//(path_is_axl(e.path)) {
+        unsigned char header[AXL_HEADER_LEN] = {0};
+        memcpy(header, AXL_MAGIC, 4);
+        header[4] = 1;   // format version
+        header[5] = 0;   // flags
+
+        wrote = write(fd, header, AXL_HEADER_LEN);
+        if (wrote != (ssize_t)AXL_HEADER_LEN) goto write_err;
+    }
+
 
     if(!e.text.empty()){
         wrote = write(fd, e.text.data(), e.text.size());
@@ -383,4 +472,117 @@ bool editor_load(Editor& e) {
     e.cursor = 0;
     editor_set_status(e, buf);
     return true;
+}
+
+
+
+// ─── Undo / redo ──────────────────────────────────────
+
+void editor_record_edit(Editor& e, EditKind kind) {
+    // Any fresh edit invalidates the redo branch.
+    e.redo_stack.clear();
+
+    auto now = std::chrono::steady_clock::now();
+    double ms_since_last = e.undo_stack.empty() ? 1e9 :
+        std::chrono::duration<double, std::milli>(now - e.last_input).count();
+
+    bool boundary =
+        e.undo_stack.empty()             ||
+        kind != e.last_edit_kind         ||
+        kind == EditKind::Paste          ||
+        kind == EditKind::DeleteSel      ||
+        ms_since_last > 500.0;
+
+    if (boundary) {
+        e.undo_stack.push_back(UndoState{ e.text, e.cursor });
+        if (e.undo_stack.size() > EDITOR_UNDO_LIMIT) {
+            e.undo_stack.erase(e.undo_stack.begin());
+        }
+    }
+    e.last_edit_kind = kind;
+}
+
+bool editor_undo(Editor& e) {
+    if (e.undo_stack.empty()) return false;
+
+    e.redo_stack.push_back(UndoState{ e.text, e.cursor });
+
+    UndoState prev = e.undo_stack.back();
+    e.undo_stack.pop_back();
+
+    e.text   = prev.text;
+    e.cursor = prev.cursor > e.text.size() ? e.text.size() : prev.cursor;
+
+    e.has_selection  = false;
+    e.last_edit_kind = EditKind::Initial;   // next edit starts a new step
+    e.dirty    = true;
+    e.modified = true;
+    return true;
+}
+
+bool editor_redo(Editor& e) {
+    if (e.redo_stack.empty()) return false;
+
+    e.undo_stack.push_back(UndoState{ e.text, e.cursor });
+
+    UndoState next = e.redo_stack.back();
+    e.redo_stack.pop_back();
+
+    e.text   = next.text;
+    e.cursor = next.cursor > e.text.size() ? e.text.size() : next.cursor;
+
+    e.has_selection  = false;
+    e.last_edit_kind = EditKind::Initial;
+    e.dirty    = true;
+    e.modified = true;
+    return true;
+}
+
+// ─── Clipboard ────────────────────────────────────────
+
+void editor_copy(Editor& e) {
+    if (!e.has_selection) return;
+    size_t lo, hi;
+    editor_selection_range(e, lo, hi);
+    if (hi > e.text.size()) hi = e.text.size();
+    if (lo >= hi) return;
+    e.clipboard.assign(e.text, lo, hi - lo);
+
+    char buf[64];
+    snprintf(buf, sizeof(buf), "copied %zu bytes", hi - lo);
+    editor_set_status(e, buf);
+}
+
+void editor_cut(Editor& e) {
+    if (!e.has_selection) return;
+    editor_copy(e);
+    editor_record_edit(e, EditKind::DeleteSel);
+    editor_delete_selection(e);
+    editor_set_status(e, "cut");
+}
+
+void editor_paste(Editor& e) {
+    if (e.clipboard.empty()) return;
+
+    editor_record_edit(e, EditKind::Paste);
+    if (e.has_selection) editor_delete_selection(e);
+
+    if (e.cursor > e.text.size()) e.cursor = e.text.size();
+    e.last_input      = std::chrono::steady_clock::now();
+    e.measure_pending = true;
+    e.text.insert(e.cursor, e.clipboard);
+    e.cursor += e.clipboard.size();
+    e.has_selection = false;
+    e.dirty    = true;
+    e.modified = true;
+}
+
+
+void editor_select_all(Editor& e) {
+    if (e.text.empty()) return;
+    e.sel_anchor = 0;
+    e.sel_active = e.text.size();
+    e.cursor = e.text.size();
+    e.has_selection = true;
+    e.dirty = true;
 }

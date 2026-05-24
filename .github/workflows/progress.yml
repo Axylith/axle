@@ -1,0 +1,45 @@
+name: Update progress badge
+
+# Regenerates .github/assets/v1-progress.svg from roadmap.yml.
+# Triggers only when the roadmap (or the generator itself) changes,
+# so doc-only pushes and routine commits don't run this.
+
+on:
+  push:
+    branches: [main, development]
+    paths:
+      - 'roadmap.yml'
+      - 'tools/generate_progress.py'
+      - '.github/workflows/progress.yml'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install pyyaml
+        run: pip install pyyaml
+
+      - name: Regenerate badge
+        run: python tools/generate_progress.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [[ -n $(git status --porcelain .github/assets/v1-progress.svg) ]]; then
+            git add .github/assets/v1-progress.svg
+            git commit -m "chore: regenerate V1 progress badge [skip ci]"
+            git push
+          else
+            echo "No changes to commit."
+          fi

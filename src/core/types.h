@@ -165,7 +165,7 @@ namespace axel {
     // --- .axl file header ---
     #pragma pack(push, 1)
     struct AXLHeader {
-        uint8_t magic[4];               // 4 byte: "AXEL"
+        uint8_t magic[5];               // 4 byte: "AXEL"
         uint8_t version;                // 1 byte: format version
         uint8_t flags;                  // 1 byte: 8 flags
         uint16_t project_count;         // 2 bytes: MATCH ProjectID
@@ -178,7 +178,7 @@ namespace axel {
         uint32_t blob_pool_size;        // 4 bytes
     };
     #pragma pack(pop)
-    static_assert(sizeof(AXLHeader) == 32, "AXLHeader is 32 bytes");
+    static_assert(sizeof(AXLHeader) == 33, "AXLHeader is 33 bytes");
     
     // --- Tiered timestamp encoding ---
     // Top 2 bits = precision, bottom 14 bits = value

@@ -1,0 +1,65 @@
+name: Release
+
+# Triggered by pushing a tag like v0.1.0. Builds a stripped release binary
+# inside the same container as the build matrix, runs tests, and publishes
+# the artifact as a GitHub Release.
+
+on:
+  push:
+    tags: ['v*']
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false   # don't cancel — we want every tagged release
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/axylith/axylith-ci:latest
+    permissions:
+      contents: write   # required to create GitHub Releases
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history for changelog generation
+
+      - name: Configure (Release)
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=gcc-13 \
+            -DCMAKE_CXX_COMPILER=g++-13
+
+      - name: Build
+        run: cmake --build build -j
+
+      - name: Test
+        working-directory: build
+        run: ctest --output-on-failure
+
+      - name: Strip binary
+        run: strip build/axylith
+
+      - name: Name the artifact
+        id: artifact
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          mv build/axylith build/axylith-${VERSION}-linux-x86_64
+          echo "path=build/axylith-${VERSION}-linux-x86_64" >> $GITHUB_OUTPUT
+
+      - name: Compute checksum
+        run: |
+          cd build
+          sha256sum axylith-*-linux-x86_64 > axylith-${GITHUB_REF#refs/tags/}-linux-x86_64.sha256
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ steps.artifact.outputs.path }}
+            build/*.sha256
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref, '-rc') || contains(github.ref, '-beta') || contains(github.ref, '-alpha') }}

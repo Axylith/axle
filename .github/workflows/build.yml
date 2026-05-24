@@ -1,14 +1,8 @@
 name: Build
 
-# One workflow for all compile/test/sanitizer checks.
-# Replaces the old ci.yml + build-matrix.yml + sanitizers.yml + _setup.yml.
-#
-# Matrix structure:
-#   - Standard builds: {gcc-12, gcc-13, clang-17} x {Debug, Release, RelWithDebInfo}
-#   - Sanitizer builds: {asan, ubsan, tsan} on Debug with clang-17
-#
-# Doc-only changes are skipped via paths-ignore so a README edit doesn't
-# trigger 12 compile jobs.
+# CI matrix running inside a pre-baked container.
+# All build deps are baked into the image at ghcr.io/<owner>/axylith-ci:latest.
+# Rebuilt via .github/workflows/docker-ci-image.yml when the Dockerfile changes.
 
 on:
   push:
@@ -28,8 +22,6 @@ on:
       - '.gitignore'
       - 'changelog.md'
 
-# Cancel superseded runs on the same ref — no point finishing CI for a
-# commit that's already been pushed past.
 concurrency:
   group: build-${{ github.ref }}
   cancel-in-progress: true
@@ -39,6 +31,8 @@ jobs:
   build:
     name: ${{ matrix.compiler }} / ${{ matrix.build_type }}
     runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/axylith/axylith-ci:latest
     strategy:
       fail-fast: false
       matrix:
@@ -47,28 +41,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-
-      - name: Cache apt packages
-        uses: actions/cache@v5
-        with:
-          path: /var/cache/apt/archives
-          key: apt-${{ runner.os }}-v1
-          restore-keys: apt-${{ runner.os }}-
-
-      - name: Install dependencies
-        timeout-minutes: 5
-        run: |
-          # Azure's Ubuntu mirror intermittently hangs for 30+ minutes.
-          # Swap to Canonical's archive and cap retries so we fail fast.
-          sudo sed -i 's|http://azure\.archive\.ubuntu\.com|http://archive.ubuntu.com|g' \
-            /etc/apt/sources.list /etc/apt/sources.list.d/*.list 2>/dev/null || true
-          sudo apt-get update -o Acquire::Retries=2 -o Acquire::http::Timeout=15
-          sudo apt-get install -y --no-install-recommends \
-            ${{ matrix.compiler }} cmake ninja-build \
-            libvulkan-dev vulkan-validationlayers \
-            libx11-dev libxext-dev \
-            libwayland-dev wayland-protocols \
-            glslc
 
       - name: Set up ccache
         uses: hendrikmuhs/ccache-action@v1.2
@@ -103,6 +75,8 @@ jobs:
   sanitizers:
     name: ${{ matrix.san }}
     runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/axylith/axylith-ci:latest
     strategy:
       fail-fast: false
       matrix:
@@ -116,26 +90,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-
-      - name: Cache apt packages
-        uses: actions/cache@v5
-        with:
-          path: /var/cache/apt/archives
-          key: apt-${{ runner.os }}-v1
-          restore-keys: apt-${{ runner.os }}-
-
-      - name: Install dependencies
-        timeout-minutes: 5
-        run: |
-          sudo sed -i 's|http://azure\.archive\.ubuntu\.com|http://archive.ubuntu.com|g' \
-            /etc/apt/sources.list /etc/apt/sources.list.d/*.list 2>/dev/null || true
-          sudo apt-get update -o Acquire::Retries=2 -o Acquire::http::Timeout=15
-          sudo apt-get install -y --no-install-recommends \
-            clang-17 cmake ninja-build \
-            libvulkan-dev vulkan-validationlayers \
-            libx11-dev libxext-dev \
-            libwayland-dev wayland-protocols \
-            glslc
 
       - name: Set up ccache
         uses: hendrikmuhs/ccache-action@v1.2
@@ -159,4 +113,59 @@ jobs:
 
       - name: Test
         working-directory: build
-        run: ctest --output-on-failure
+        run: ctest --output-on-failure --output-junit results.xml
+
+      - name: Publish test results
+        uses: mikepenz/action-junit-report@v4
+        if: always()
+        with:
+          report_paths: 'build/results.xml'
+  # ----- Valgrind Memcheck (catches uninit memory reads ASan can't) -----
+  valgrind:
+      name: valgrind
+      runs-on: ubuntu-24.04
+      container:
+        image: ghcr.io/axylith/axylith-ci:latest
+      steps:
+        - uses: actions/checkout@v4
+
+        - name: Install valgrind
+          run: |
+            apt-get update -o Acquire::Retries=2
+            apt-get install -y --no-install-recommends valgrind
+
+        - name: Set up ccache
+          uses: hendrikmuhs/ccache-action@v1.2
+          with:
+            key: valgrind
+            max-size: 200M
+
+        - name: Configure (Debug, no sanitizers)
+          run: |
+            cmake -B build -G Ninja \
+              -DCMAKE_BUILD_TYPE=Debug \
+              -DCMAKE_C_COMPILER=gcc-13 \
+              -DCMAKE_CXX_COMPILER=g++-13 \
+              -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+              -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+        - name: Build
+          run: cmake --build build -j
+
+        - name: Run tests under Valgrind
+          working-directory: build
+          run: |
+            valgrind \
+              --error-exitcode=1 \
+              --leak-check=full \
+              --show-leak-kinds=definite,possible \
+              --errors-for-leak-kinds=definite \
+              --track-origins=yes \
+              --suppressions=/dev/null \
+              ./editor_test
+            valgrind \
+              --error-exitcode=1 \
+              --leak-check=full \
+              --errors-for-leak-kinds=definite \
+              --track-origins=yes \
+              ./axl_test
