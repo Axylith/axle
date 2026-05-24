@@ -16,7 +16,7 @@ jobs:
   release:
     runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/${{ github.repository_owner }}/axylith-ci:latest
+      image: ghcr.io/axylith/axylith-ci:latest
     permissions:
       contents: write   # required to create GitHub Releases
 

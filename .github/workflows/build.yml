@@ -76,7 +76,7 @@ jobs:
     name: ${{ matrix.san }}
     runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/${{ github.repository_owner }}/axylith-ci:latest
+      image: ghcr.io/axylith/axylith-ci:latest
     strategy:
       fail-fast: false
       matrix:
@@ -120,3 +120,52 @@ jobs:
         if: always()
         with:
           report_paths: 'build/results.xml'
+  # ----- Valgrind Memcheck (catches uninit memory reads ASan can't) -----
+  valgrind:
+      name: valgrind
+      runs-on: ubuntu-24.04
+      container:
+        image: ghcr.io/axylith/axylith-ci:latest
+      steps:
+        - uses: actions/checkout@v4
+
+        - name: Install valgrind
+          run: |
+            apt-get update -o Acquire::Retries=2
+            apt-get install -y --no-install-recommends valgrind
+
+        - name: Set up ccache
+          uses: hendrikmuhs/ccache-action@v1.2
+          with:
+            key: valgrind
+            max-size: 200M
+
+        - name: Configure (Debug, no sanitizers)
+          run: |
+            cmake -B build -G Ninja \
+              -DCMAKE_BUILD_TYPE=Debug \
+              -DCMAKE_C_COMPILER=gcc-13 \
+              -DCMAKE_CXX_COMPILER=g++-13 \
+              -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+              -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+        - name: Build
+          run: cmake --build build -j
+
+        - name: Run tests under Valgrind
+          working-directory: build
+          run: |
+            valgrind \
+              --error-exitcode=1 \
+              --leak-check=full \
+              --show-leak-kinds=definite,possible \
+              --errors-for-leak-kinds=definite \
+              --track-origins=yes \
+              --suppressions=/dev/null \
+              ./editor_test
+            valgrind \
+              --error-exitcode=1 \
+              --leak-check=full \
+              --errors-for-leak-kinds=definite \
+              --track-origins=yes \
+              ./axl_test
