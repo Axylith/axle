@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 510" width="900" height="510" role="img" aria-label="V1 progress: 5 of 10 features complete">
+    <defs>
+        <linearGradient id="bgp" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0d0e10"/>
+            <stop offset="100%" stop-color="#13151a"/>
+        </linearGradient>
+        <linearGradient id="barfill" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#a87838"/>
+            <stop offset="100%" stop-color="#8a6228"/>
+        </linearGradient>
+    </defs>
+
+    <rect width="900" height="510" fill="url(#bgp)" rx="8"/>
+
+    <!-- Header strip -->
+    <text x="40" y="36" font-family="JetBrains Mono, monospace" font-size="11" fill="#5a5249" letter-spacing="2">
+        V1 ROADMAP &#x2022; FIRST PUBLIC RELEASE
+    </text>
+    <text x="860" y="36" font-family="JetBrains Mono, monospace" font-size="11" text-anchor="end" fill="#a87838" letter-spacing="2">
+        5/10 &#x2022; 50%
+    </text>
+    <line x1="40" y1="46" x2="860" y2="46" stroke="#2a2d34" stroke-width="1"/>
+
+    <!-- Feature rows -->
+    <g font-family="JetBrains Mono, monospace">
+        <text x="32" y="89" fill="#3a3d44" text-anchor="end" font-size="10" letter-spacing="1">01</text><g transform="translate(50,76)" stroke="#a87838" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,9 7,14 17,4"/></g><text x="86" y="89" fill="#e8dcc8" font-size="14" font-weight="500">Text editor (multi-line, UTF-8, cursor)</text><line x1="40" y1="102" x2="860" y2="102" stroke="#1a1c20" stroke-width="0.5"/>
+        <text x="32" y="125" fill="#3a3d44" text-anchor="end" font-size="10" letter-spacing="1">02</text><g transform="translate(50,112)" stroke="#a87838" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,9 7,14 17,4"/></g><text x="86" y="125" fill="#e8dcc8" font-size="14" font-weight="500">Save / load with .axl format</text><line x1="40" y1="138" x2="860" y2="138" stroke="#1a1c20" stroke-width="0.5"/>
+        <text x="32" y="161" fill="#3a3d44" text-anchor="end" font-size="10" letter-spacing="1">03</text><g transform="translate(50,148)" stroke="#a87838" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,9 7,14 17,4"/></g><text x="86" y="161" fill="#e8dcc8" font-size="14" font-weight="500">Selection + word movement</text><line x1="40" y1="174" x2="860" y2="174" stroke="#1a1c20" stroke-width="0.5"/>
+        <text x="32" y="197" fill="#3a3d44" text-anchor="end" font-size="10" letter-spacing="1">04</text><g transform="translate(50,184)" stroke="#a87838" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,9 7,14 17,4"/></g><text x="86" y="197" fill="#e8dcc8" font-size="14" font-weight="500">Undo / redo + clipboard</text><line x1="40" y1="210" x2="860" y2="210" stroke="#1a1c20" stroke-width="0.5"/>
+        <text x="32" y="233" fill="#3a3d44" text-anchor="end" font-size="10" letter-spacing="1">05</text><g transform="translate(50,220)" stroke="#a87838" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,9 7,14 17,4"/></g><text x="86" y="233" fill="#e8dcc8" font-size="14" font-weight="500">Custom keybindings</text><line x1="40" y1="246" x2="860" y2="246" stroke="#1a1c20" stroke-width="0.5"/>
+        <text x="32" y="269" fill="#3a3d44" text-anchor="end" font-size="10" letter-spacing="1">06</text><circle cx="60" cy="263" r="6.5" fill="none" stroke="#3a3d44" stroke-width="1.2"/><text x="86" y="269" fill="#6a6258" font-size="14" font-weight="400">File-open overlay (folder navigation)</text><line x1="40" y1="282" x2="860" y2="282" stroke="#1a1c20" stroke-width="0.5"/>
+        <text x="32" y="305" fill="#3a3d44" text-anchor="end" font-size="10" letter-spacing="1">07</text><circle cx="60" cy="299" r="6.5" fill="none" stroke="#3a3d44" stroke-width="1.2"/><text x="86" y="305" fill="#6a6258" font-size="14" font-weight="400">Find / replace</text><line x1="40" y1="318" x2="860" y2="318" stroke="#1a1c20" stroke-width="0.5"/>
+        <text x="32" y="341" fill="#3a3d44" text-anchor="end" font-size="10" letter-spacing="1">08</text><circle cx="60" cy="335" r="6.5" fill="none" stroke="#3a3d44" stroke-width="1.2"/><text x="86" y="341" fill="#6a6258" font-size="14" font-weight="400">Notebook execution (embedded Python)</text><line x1="40" y1="354" x2="860" y2="354" stroke="#1a1c20" stroke-width="0.5"/>
+        <text x="32" y="377" fill="#3a3d44" text-anchor="end" font-size="10" letter-spacing="1">09</text><circle cx="60" cy="371" r="6.5" fill="none" stroke="#3a3d44" stroke-width="1.2"/><text x="86" y="377" fill="#6a6258" font-size="14" font-weight="400">3D mesh viewer</text><line x1="40" y1="390" x2="860" y2="390" stroke="#1a1c20" stroke-width="0.5"/>
+        <text x="32" y="413" fill="#3a3d44" text-anchor="end" font-size="10" letter-spacing="1">10</text><circle cx="60" cy="407" r="6.5" fill="none" stroke="#3a3d44" stroke-width="1.2"/><text x="86" y="413" fill="#6a6258" font-size="14" font-weight="400">AI integration sidebar</text><line x1="40" y1="426" x2="860" y2="426" stroke="#1a1c20" stroke-width="0.5"/>
+    </g>
+
+    <!-- Progress bar -->
+    <g transform="translate(0, 474)">
+        <text x="40" y="0" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5249" letter-spacing="1.5">PROGRESS</text>
+        <rect x="200" y="-10" width="600" height="12" rx="3" fill="#1a1c20" stroke="#2a2d34" stroke-width="0.5"/>
+        <rect x="200" y="-10" width="300" height="12" rx="3" fill="url(#barfill)"/>
+        <text x="860" y="0" font-family="JetBrains Mono, monospace" font-size="10" text-anchor="end" fill="#6a6258" letter-spacing="0.5">PRE-V1</text>
+    </g>
+</svg>

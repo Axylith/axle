@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 280" width="900" height="280" role="img" aria-label="Build pipeline: clone, install, configure, build, run">
+    <defs>
+        <linearGradient id="bg2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0d0e10"/>
+            <stop offset="100%" stop-color="#13151a"/>
+        </linearGradient>
+        <linearGradient id="accent2" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#c89858"/>
+            <stop offset="100%" stop-color="#b88848"/>
+        </linearGradient>
+    </defs>
+
+    <rect width="900" height="280" fill="url(#bg2)" rx="8"/>
+
+    <!-- Header strip -->
+    <text x="40" y="36" font-family="JetBrains Mono, monospace" font-size="11" fill="#5a5249" letter-spacing="2">
+        BUILD PIPELINE
+    </text>
+    <line x1="40" y1="46" x2="860" y2="46" stroke="#2a2d34" stroke-width="1"/>
+
+    <!-- ── Step boxes ────────────────────────────────────── -->
+    <!-- All boxes share the same vertical position and dimensions.
+         Spacing computed to fit 5 steps across 820px (40-860). -->
+
+    <g font-family="JetBrains Mono, monospace">
+
+        <!-- Step 1: Clone -->
+        <g transform="translate(50, 80)">
+            <rect width="140" height="140" rx="6" fill="#16181c" stroke="#2a2d34" stroke-width="1"/>
+            <text x="14" y="22" fill="#5a5249" font-size="10" letter-spacing="1.5">01</text>
+            <g transform="translate(54, 14)" stroke="#c89858" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="11" height="11" rx="1.5"/>
+                <path d="M5 15V5a1.5 1.5 0 0 1 1.5-1.5h10"/>
+            </g>
+            <text x="14" y="68" fill="#e8dcc8" font-size="13" font-weight="500">CLONE</text>
+            <text x="14" y="92" fill="#8b8275" font-size="10">git clone</text>
+            <text x="14" y="106" fill="#8b8275" font-size="10">axylith/axle</text>
+            <line x1="14" y1="118" x2="126" y2="118" stroke="#2a2d34" stroke-width="0.5"/>
+            <text x="14" y="132" fill="#5a5249" font-size="9">~30 seconds</text>
+        </g>
+
+        <!-- Arrow 1 -->
+        <g transform="translate(195, 145)" stroke="#5a5249" fill="none" stroke-width="1.2" stroke-linecap="round">
+            <line x1="0" y1="0" x2="20" y2="0"/>
+            <polyline points="14,-4 20,0 14,4"/>
+        </g>
+
+        <!-- Step 2: Install -->
+        <g transform="translate(220, 80)">
+            <rect width="140" height="140" rx="6" fill="#16181c" stroke="#2a2d34" stroke-width="1"/>
+            <text x="14" y="22" fill="#5a5249" font-size="10" letter-spacing="1.5">02</text>
+            <g transform="translate(54, 14)" stroke="#c89858" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 7l9-4 9 4-9 4z"/>
+                <path d="M3 7v10l9 4 9-4V7"/>
+                <path d="M12 11v10"/>
+            </g>
+            <text x="14" y="68" fill="#e8dcc8" font-size="13" font-weight="500">INSTALL</text>
+            <text x="14" y="92" fill="#8b8275" font-size="10">Vulkan, X11,</text>
+            <text x="14" y="106" fill="#8b8275" font-size="10">cmake, ninja, glslc</text>
+            <line x1="14" y1="118" x2="126" y2="118" stroke="#2a2d34" stroke-width="0.5"/>
+            <text x="14" y="132" fill="#5a5249" font-size="9">~2 minutes</text>
+        </g>
+
+        <!-- Arrow 2 -->
+        <g transform="translate(365, 145)" stroke="#5a5249" fill="none" stroke-width="1.2" stroke-linecap="round">
+            <line x1="0" y1="0" x2="20" y2="0"/>
+            <polyline points="14,-4 20,0 14,4"/>
+        </g>
+
+        <!-- Step 3: Configure -->
+        <g transform="translate(390, 80)">
+            <rect width="140" height="140" rx="6" fill="#16181c" stroke="#2a2d34" stroke-width="1"/>
+            <text x="14" y="22" fill="#5a5249" font-size="10" letter-spacing="1.5">03</text>
+            <g transform="translate(54, 14)" stroke="#c89858" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>
+            </g>
+            <text x="14" y="68" fill="#e8dcc8" font-size="13" font-weight="500">CONFIGURE</text>
+            <text x="14" y="92" fill="#8b8275" font-size="10">cmake -B build</text>
+            <text x="14" y="106" fill="#8b8275" font-size="10">-G Ninja</text>
+            <line x1="14" y1="118" x2="126" y2="118" stroke="#2a2d34" stroke-width="0.5"/>
+            <text x="14" y="132" fill="#5a5249" font-size="9">~10 seconds</text>
+        </g>
+
+        <!-- Arrow 3 -->
+        <g transform="translate(535, 145)" stroke="#5a5249" fill="none" stroke-width="1.2" stroke-linecap="round">
+            <line x1="0" y1="0" x2="20" y2="0"/>
+            <polyline points="14,-4 20,0 14,4"/>
+        </g>
+
+        <!-- Step 4: Build -->
+        <g transform="translate(560, 80)">
+            <rect width="140" height="140" rx="6" fill="#16181c" stroke="#2a2d34" stroke-width="1"/>
+            <text x="14" y="22" fill="#5a5249" font-size="10" letter-spacing="1.5">04</text>
+            <g transform="translate(54, 14)" stroke="#c89858" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 21l5-5"/>
+                <path d="M14 6l4 4-7 7-4-4z"/>
+                <path d="M14 6l2-2a2 2 0 0 1 3 3l-2 2"/>
+            </g>
+            <text x="14" y="68" fill="#e8dcc8" font-size="13" font-weight="500">BUILD</text>
+            <text x="14" y="92" fill="#8b8275" font-size="10">cmake --build</text>
+            <text x="14" y="106" fill="#8b8275" font-size="10">build -j</text>
+            <line x1="14" y1="118" x2="126" y2="118" stroke="#2a2d34" stroke-width="0.5"/>
+            <text x="14" y="132" fill="#5a5249" font-size="9">~15 seconds</text>
+        </g>
+
+        <!-- Arrow 4 -->
+        <g transform="translate(705, 145)" stroke="#5a5249" fill="none" stroke-width="1.2" stroke-linecap="round">
+            <line x1="0" y1="0" x2="20" y2="0"/>
+            <polyline points="14,-4 20,0 14,4"/>
+        </g>
+
+        <!-- Step 5: Run -->
+        <g transform="translate(730, 80)">
+            <rect width="140" height="140" rx="6" fill="#16181c" stroke="url(#accent2)" stroke-width="1.5"/>
+            <text x="14" y="22" fill="#5a5249" font-size="10" letter-spacing="1.5">05</text>
+            <g transform="translate(54, 14)" stroke="url(#accent2)" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="6,4 20,12 6,20"/>
+            </g>
+            <text x="14" y="68" fill="#e8dcc8" font-size="13" font-weight="500">RUN</text>
+            <text x="14" y="92" fill="#8b8275" font-size="10">./build/axylith</text>
+            <text x="14" y="106" fill="#8b8275" font-size="10"></text>
+            <line x1="14" y1="118" x2="126" y2="118" stroke="#2a2d34" stroke-width="0.5"/>
+            <text x="14" y="132" fill="#c89858" font-size="9" opacity="0.7">ready</text>
+        </g>
+    </g>
+
+    <!-- Footer note -->
+    <text x="40" y="262" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5249" letter-spacing="0.5">
+        cold build: ~3 minutes · incremental: ~10 seconds · linux/x11 only at present
+    </text>
+</svg>
