@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" width="900" height="220" role="img" aria-label="V1 .axl header byte layout (16 bytes)">
+    <defs>
+        <linearGradient id="bg-v1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0d0e10"/>
+            <stop offset="100%" stop-color="#13151a"/>
+        </linearGradient>
+        <linearGradient id="acc-v1" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#c89858"/>
+            <stop offset="100%" stop-color="#b88848"/>
+        </linearGradient>
+    </defs>
+
+    <rect width="900" height="220" fill="url(#bg-v1)" rx="8"/>
+
+    <!-- Title strip -->
+    <text x="40" y="36" font-family="JetBrains Mono, monospace" font-size="11" fill="#5a5249" letter-spacing="2">
+        V1 HEADER · 16 BYTES
+    </text>
+    <line x1="40" y1="46" x2="860" y2="46" stroke="#2a2d34" stroke-width="1"/>
+
+    <!-- Byte grid: 16 cells across, each 50px wide -->
+    <!-- Total width: 800px, centered at x=50 -->
+
+    <!-- Byte index labels (top) -->
+    <g font-family="JetBrains Mono, monospace" font-size="9" fill="#3a3d44" text-anchor="middle">
+        <text x="75"  y="72">00</text>
+        <text x="125" y="72">01</text>
+        <text x="175" y="72">02</text>
+        <text x="225" y="72">03</text>
+        <text x="275" y="72">04</text>
+        <text x="325" y="72">05</text>
+        <text x="375" y="72">06</text>
+        <text x="425" y="72">07</text>
+        <text x="475" y="72">08</text>
+        <text x="525" y="72">09</text>
+        <text x="575" y="72">0A</text>
+        <text x="625" y="72">0B</text>
+        <text x="675" y="72">0C</text>
+        <text x="725" y="72">0D</text>
+        <text x="775" y="72">0E</text>
+        <text x="825" y="72">0F</text>
+    </g>
+
+    <!-- Field 1: magic (4 bytes) -->
+    <g>
+        <rect x="50" y="80" width="200" height="48" rx="3" fill="#1a2026" stroke="url(#acc-v1)" stroke-width="1.2"/>
+        <text x="150" y="103" font-family="JetBrains Mono, monospace" font-size="13" fill="#e8dcc8" text-anchor="middle" font-weight="500">magic</text>
+        <text x="150" y="120" font-family="JetBrains Mono, monospace" font-size="10" fill="#c89858" text-anchor="middle">"AXL\0"</text>
+    </g>
+
+    <!-- Field 2: version (1 byte) -->
+    <g>
+        <rect x="250" y="80" width="50" height="48" rx="3" fill="#1c1a16" stroke="#5a5249" stroke-width="1"/>
+        <text x="275" y="103" font-family="JetBrains Mono, monospace" font-size="11" fill="#e8dcc8" text-anchor="middle">ver</text>
+        <text x="275" y="120" font-family="JetBrains Mono, monospace" font-size="10" fill="#8b8275" text-anchor="middle">01</text>
+    </g>
+
+    <!-- Field 3: flags (1 byte) -->
+    <g>
+        <rect x="300" y="80" width="50" height="48" rx="3" fill="#1c1a16" stroke="#5a5249" stroke-width="1"/>
+        <text x="325" y="103" font-family="JetBrains Mono, monospace" font-size="11" fill="#e8dcc8" text-anchor="middle">flg</text>
+        <text x="325" y="120" font-family="JetBrains Mono, monospace" font-size="10" fill="#8b8275" text-anchor="middle">00</text>
+    </g>
+
+    <!-- Field 4: reserved (10 bytes) -->
+    <g>
+        <rect x="350" y="80" width="500" height="48" rx="3" fill="#16181c" stroke="#2a2d34" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="600" y="103" font-family="JetBrains Mono, monospace" font-size="13" fill="#6a6258" text-anchor="middle">reserved (zero-filled)</text>
+        <text x="600" y="120" font-family="JetBrains Mono, monospace" font-size="10" fill="#3a3d44" text-anchor="middle">00 00 00 00 00 00 00 00 00 00</text>
+    </g>
+
+    <!-- Field labels (bottom) - field sizes -->
+    <g font-family="JetBrains Mono, monospace" font-size="9" fill="#5a5249" text-anchor="middle">
+        <text x="150" y="148">4 bytes</text>
+        <text x="275" y="148">1 byte</text>
+        <text x="325" y="148">1 byte</text>
+        <text x="600" y="148">10 bytes</text>
+    </g>
+
+    <!-- Below: hex dump example -->
+    <g font-family="JetBrains Mono, monospace" font-size="11">
+        <text x="40" y="180" fill="#5a5249" letter-spacing="1.5">EXAMPLE</text>
+        <line x1="40" y1="188" x2="860" y2="188" stroke="#2a2d34" stroke-width="0.5"/>
+
+        <text x="40" y="208" fill="#3a3d44">$</text>
+        <text x="55" y="208" fill="#8b8275">od -An -tx1 -N 16 untitled.axl</text>
+    </g>
+
+    <!-- Hex dump value, right side -->
+    <g font-family="JetBrains Mono, monospace" font-size="10">
+        <text x="450" y="208" fill="#c89858">41 58 4c 00</text>
+        <text x="540" y="208" fill="#e8dcc8">01</text>
+        <text x="570" y="208" fill="#e8dcc8">00</text>
+        <text x="600" y="208" fill="#6a6258">00 00 00 00 00 00 00 00 00 00</text>
+    </g>
+</svg>

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 100" width="900" height="100" role="img" aria-label="File format documentation header">
+    <defs>
+        <linearGradient id="bg-fmt" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0d0e10"/>
+            <stop offset="100%" stop-color="#13151a"/>
+        </linearGradient>
+        <linearGradient id="acc-fmt" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#c89858"/>
+            <stop offset="100%" stop-color="#b88848"/>
+        </linearGradient>
+        <pattern id="grid-fmt" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2126" stroke-width="0.5"/>
+        </pattern>
+    </defs>
+
+    <rect width="900" height="100" fill="url(#bg-fmt)"/>
+    <rect width="900" height="100" fill="url(#grid-fmt)" opacity="0.5"/>
+    <rect x="0" y="0" width="900" height="1" fill="url(#acc-fmt)" opacity="0.4"/>
+    <rect x="0" y="99" width="900" height="1" fill="url(#acc-fmt)" opacity="0.4"/>
+
+    <!-- Left: breadcrumb -->
+    <g font-family="JetBrains Mono, Menlo, Consolas, monospace">
+        <text x="40" y="32" fill="#5a5249" font-size="10" letter-spacing="1.5">
+            <tspan fill="#5a5249">axylith</tspan>
+            <tspan fill="#3a3d44" dx="4">/</tspan>
+            <tspan fill="#8b8275" dx="4">docs</tspan>
+            <tspan fill="#3a3d44" dx="4">/</tspan>
+            <tspan fill="url(#acc-fmt)" dx="4">FORMAT</tspan>
+        </text>
+
+        <text x="40" y="68" fill="#e8dcc8" font-size="22" font-weight="500" letter-spacing="-0.5">
+            .axl file format
+        </text>
+
+        <text x="40" y="88" fill="#8b8275" font-size="11" letter-spacing="0.5">
+            binary on-disk format spec · V1 implemented · V2 specified
+        </text>
+    </g>
+
+    <!-- Right: tag pills -->
+    <g font-family="JetBrains Mono, Menlo, Consolas, monospace" font-size="10" letter-spacing="1">
+        <g transform="translate(720, 30)">
+            <rect width="60" height="18" rx="9" fill="none" stroke="#3a3d44" stroke-width="0.8"/>
+            <text x="30" y="12" fill="#8b8275" text-anchor="middle">SPEC</text>
+        </g>
+        <g transform="translate(790, 30)">
+            <rect width="70" height="18" rx="9" fill="none" stroke="url(#acc-fmt)" stroke-width="0.8" opacity="0.6"/>
+            <text x="35" y="12" fill="#c89858" text-anchor="middle">V1 LIVE</text>
+        </g>
+    </g>
+</svg>

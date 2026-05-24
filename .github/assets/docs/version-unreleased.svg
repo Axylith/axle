@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 280" width="900" height="280" role="img" aria-label="Tiered timestamp encoding: 16-bit delta from base">
+    <defs>
+        <linearGradient id="bg-ts" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0d0e10"/>
+            <stop offset="100%" stop-color="#13151a"/>
+        </linearGradient>
+        <linearGradient id="acc-ts" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#c89858"/>
+            <stop offset="100%" stop-color="#b88848"/>
+        </linearGradient>
+    </defs>
+
+    <rect width="900" height="280" fill="url(#bg-ts)" rx="8"/>
+
+    <text x="40" y="36" font-family="JetBrains Mono, monospace" font-size="11" fill="#5a5249" letter-spacing="2">
+        TIERED TIMESTAMP · 16 BITS · DELTA FROM base_timestamp
+    </text>
+    <line x1="40" y1="46" x2="860" y2="46" stroke="#2a2d34" stroke-width="1"/>
+
+    <!-- The 16-bit bit grid -->
+    <g font-family="JetBrains Mono, monospace">
+        <!-- Bit position labels (top) -->
+        <g font-size="9" fill="#3a3d44" text-anchor="middle">
+            <text x="80"  y="78">15</text>
+            <text x="124" y="78">14</text>
+            <text x="168" y="78">13</text>
+            <text x="212" y="78">12</text>
+            <text x="256" y="78">11</text>
+            <text x="300" y="78">10</text>
+            <text x="344" y="78">9</text>
+            <text x="388" y="78">8</text>
+            <text x="432" y="78">7</text>
+            <text x="476" y="78">6</text>
+            <text x="520" y="78">5</text>
+            <text x="564" y="78">4</text>
+            <text x="608" y="78">3</text>
+            <text x="652" y="78">2</text>
+            <text x="696" y="78">1</text>
+            <text x="740" y="78">0</text>
+        </g>
+
+        <!-- Tier bits [15-14] -->
+        <rect x="60" y="86" width="88" height="40" rx="3" fill="#1a2026" stroke="url(#acc-ts)" stroke-width="1.5"/>
+        <text x="104" y="106" font-size="11" fill="#e8dcc8" text-anchor="middle">tier</text>
+        <text x="104" y="120" font-size="8" fill="#c89858" text-anchor="middle">2 bits</text>
+
+        <!-- Value bits [13-0] -->
+        <rect x="148" y="86" width="616" height="40" rx="3" fill="#16181c" stroke="#5a5249" stroke-width="1"/>
+        <text x="456" y="106" font-size="11" fill="#e8dcc8" text-anchor="middle">value</text>
+        <text x="456" y="120" font-size="8" fill="#8b8275" text-anchor="middle">14 bits · 0–16,383</text>
+    </g>
+
+    <!-- Tier table -->
+    <text x="40" y="166" font-family="JetBrains Mono, monospace" font-size="11" fill="#5a5249" letter-spacing="2">DECODE TABLE</text>
+    <line x1="40" y1="174" x2="860" y2="174" stroke="#2a2d34" stroke-width="0.5"/>
+
+    <g font-family="JetBrains Mono, monospace" font-size="11">
+        <!-- Header row -->
+        <text x="60" y="200" fill="#5a5249" letter-spacing="1.5">TIER</text>
+        <text x="180" y="200" fill="#5a5249" letter-spacing="1.5">PRECISION</text>
+        <text x="380" y="200" fill="#5a5249" letter-spacing="1.5">MAX VALUE</text>
+        <text x="600" y="200" fill="#5a5249" letter-spacing="1.5">COVERS</text>
+
+        <!-- Row 1: 00 - minutes -->
+        <text x="60"  y="224" fill="#c89858">00</text>
+        <text x="180" y="224" fill="#e8dcc8">minutes</text>
+        <text x="380" y="224" fill="#e8dcc8">16,383 min</text>
+        <text x="600" y="224" fill="#8b8275">~11 days</text>
+
+        <!-- Row 2: 01 - hours -->
+        <text x="60"  y="244" fill="#c89858">01</text>
+        <text x="180" y="244" fill="#e8dcc8">hours</text>
+        <text x="380" y="244" fill="#e8dcc8">16,383 hrs</text>
+        <text x="600" y="244" fill="#8b8275">~1.9 years</text>
+
+        <!-- Row 3: 10 - days -->
+        <text x="60"  y="264" fill="#c89858">10</text>
+        <text x="180" y="264" fill="#e8dcc8">days</text>
+        <text x="380" y="264" fill="#e8dcc8">16,383 days</text>
+        <text x="600" y="264" fill="#8b8275">~44 years</text>
+    </g>
+</svg>

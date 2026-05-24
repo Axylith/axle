@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 64" width="900" height="64" role="img" aria-label="Version 0.0.2-pre marker">
+    <defs>
+        <linearGradient id="bg-002" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0d0e10"/>
+            <stop offset="100%" stop-color="#13151a"/>
+        </linearGradient>
+    </defs>
+
+    <rect width="900" height="64" fill="url(#bg-002)" rx="6"/>
+    <rect x="0" y="0" width="4" height="64" fill="#5a5249"/>
+
+    <g font-family="JetBrains Mono, monospace">
+        <text x="40" y="26" font-size="10" fill="#5a5249" letter-spacing="2">RELEASED</text>
+        <text x="40" y="50" font-size="22" fill="#e8dcc8" font-weight="500" letter-spacing="-0.5">0.0.2-pre</text>
+
+        <text x="180" y="42" font-size="10" fill="#5a5249" letter-spacing="0.5">— Editor core, format spec, full CI</text>
+
+        <g transform="translate(720, 22)">
+            <circle cx="6" cy="20" r="4" fill="#5a5249" opacity="0.6"/>
+            <text x="20" y="18" font-size="11" fill="#8b8275">shipped</text>
+            <text x="20" y="32" font-size="9" fill="#5a5249" letter-spacing="0.5">superseded by Unreleased</text>
+        </g>
+    </g>
+</svg>

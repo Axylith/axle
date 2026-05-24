@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" width="900" height="380" role="img" aria-label="V2 record layouts: Block, Page, Project">
+    <defs>
+        <linearGradient id="bg-rec" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0d0e10"/>
+            <stop offset="100%" stop-color="#13151a"/>
+        </linearGradient>
+        <linearGradient id="acc-rec" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#c89858"/>
+            <stop offset="100%" stop-color="#b88848"/>
+        </linearGradient>
+    </defs>
+
+    <rect width="900" height="380" fill="url(#bg-rec)" rx="8"/>
+
+    <text x="40" y="36" font-family="JetBrains Mono, monospace" font-size="11" fill="#5a5249" letter-spacing="2">
+        V2 STRUCTURED RECORDS
+    </text>
+    <line x1="40" y1="46" x2="860" y2="46" stroke="#2a2d34" stroke-width="1"/>
+
+    <!-- ═══════════════════════════════════════════════
+         Project — 10 bytes
+         ═══════════════════════════════════════════════ -->
+    <g font-family="JetBrains Mono, monospace">
+        <text x="40" y="80" font-size="13" fill="#e8dcc8" font-weight="500">Project</text>
+        <text x="105" y="80" font-size="10" fill="url(#acc-rec)">10 bytes</text>
+
+        <!-- Bytes 0-9 (10 bytes), 50px each -->
+        <g font-size="8" fill="#3a3d44" text-anchor="middle">
+            <text x="75"  y="100">00</text>
+            <text x="125" y="100">01</text>
+            <text x="175" y="100">02</text>
+            <text x="225" y="100">03</text>
+            <text x="275" y="100">04</text>
+            <text x="325" y="100">05</text>
+            <text x="375" y="100">06</text>
+            <text x="425" y="100">07</text>
+            <text x="475" y="100">08</text>
+            <text x="525" y="100">09</text>
+        </g>
+
+        <!-- name_offset [0-3] - 4 bytes -->
+        <rect x="50" y="108" width="200" height="40" rx="3" fill="#1a1c20" stroke="#3a3d44" stroke-width="1"/>
+        <text x="150" y="128" font-size="11" fill="#e8dcc8" text-anchor="middle">name_offset</text>
+        <text x="150" y="142" font-size="8" fill="#5a5249" text-anchor="middle">u32 · into string pool</text>
+
+        <!-- id [4-5] - 2 bytes -->
+        <rect x="250" y="108" width="100" height="40" rx="3" fill="#16181c" stroke="#5a5249" stroke-width="1"/>
+        <text x="300" y="128" font-size="11" fill="#e8dcc8" text-anchor="middle">id</text>
+        <text x="300" y="142" font-size="8" fill="#5a5249" text-anchor="middle">PROJECTID</text>
+
+        <!-- page_count [6-7] - 2 bytes -->
+        <rect x="350" y="108" width="100" height="40" rx="3" fill="#16181c" stroke="#5a5249" stroke-width="1"/>
+        <text x="400" y="128" font-size="11" fill="#e8dcc8" text-anchor="middle">page_count</text>
+        <text x="400" y="142" font-size="8" fill="#5a5249" text-anchor="middle">PAGEID</text>
+
+        <!-- name_length [8] - 1 byte -->
+        <rect x="450" y="108" width="50" height="40" rx="3" fill="#1c1a16" stroke="#5a5249" stroke-width="1"/>
+        <text x="475" y="128" font-size="10" fill="#e8dcc8" text-anchor="middle">len</text>
+        <text x="475" y="142" font-size="8" fill="#5a5249" text-anchor="middle">u8</text>
+
+        <!-- color [9] - 1 byte -->
+        <rect x="500" y="108" width="50" height="40" rx="3" fill="#1c1a16" stroke="url(#acc-rec)" stroke-width="1"/>
+        <text x="525" y="128" font-size="10" fill="#e8dcc8" text-anchor="middle">clr</text>
+        <text x="525" y="142" font-size="8" fill="#c89858" text-anchor="middle">u8</text>
+    </g>
+
+    <line x1="40" y1="170" x2="860" y2="170" stroke="#2a2d34" stroke-width="0.5"/>
+
+    <!-- ═══════════════════════════════════════════════
+         Page — 22 bytes
+         ═══════════════════════════════════════════════ -->
+    <g font-family="JetBrains Mono, monospace">
+        <text x="40" y="195" font-size="13" fill="#e8dcc8" font-weight="500">Page</text>
+        <text x="85" y="195" font-size="10" fill="url(#acc-rec)">22 bytes</text>
+
+        <!-- Bytes 0-21, 22 bytes total, 36px each across 792px starting at x=54 -->
+        <g font-size="8" fill="#3a3d44" text-anchor="middle">
+            <text x="72"  y="215">00</text>
+            <text x="108" y="215">01</text>
+            <text x="144" y="215">02</text>
+            <text x="180" y="215">03</text>
+            <text x="216" y="215">04</text>
+            <text x="252" y="215">05</text>
+            <text x="288" y="215">06</text>
+            <text x="324" y="215">07</text>
+            <text x="360" y="215">08</text>
+            <text x="396" y="215">09</text>
+            <text x="432" y="215">0A</text>
+            <text x="468" y="215">0B</text>
+            <text x="504" y="215">0C</text>
+            <text x="540" y="215">0D</text>
+            <text x="576" y="215">0E</text>
+            <text x="612" y="215">0F</text>
+            <text x="648" y="215">10</text>
+            <text x="684" y="215">11</text>
+            <text x="720" y="215">12</text>
+            <text x="756" y="215">13</text>
+            <text x="792" y="215">14</text>
+            <text x="828" y="215">15</text>
+        </g>
+
+        <!-- title_offset [0-3] - 4 bytes, 144 wide -->
+        <rect x="54" y="223" width="144" height="40" rx="3" fill="#1a1c20" stroke="#3a3d44" stroke-width="1"/>
+        <text x="126" y="243" font-size="10" fill="#e8dcc8" text-anchor="middle">title_offset</text>
+        <text x="126" y="255" font-size="8" fill="#5a5249" text-anchor="middle">u32</text>
+
+        <!-- title_length [4-5] - 2 bytes, 72 wide -->
+        <rect x="198" y="223" width="72" height="40" rx="3" fill="#16181c" stroke="#5a5249" stroke-width="1"/>
+        <text x="234" y="243" font-size="10" fill="#e8dcc8" text-anchor="middle">title_len</text>
+        <text x="234" y="255" font-size="8" fill="#5a5249" text-anchor="middle">u16</text>
+
+        <!-- block_start [6-9] - 4 bytes, 144 wide -->
+        <rect x="270" y="223" width="144" height="40" rx="3" fill="#1a1c20" stroke="#3a3d44" stroke-width="1"/>
+        <text x="342" y="243" font-size="10" fill="#e8dcc8" text-anchor="middle">block_start</text>
+        <text x="342" y="255" font-size="8" fill="#5a5249" text-anchor="middle">u32</text>
+
+        <!-- block_count [10-13] - 4 bytes, 144 wide -->
+        <rect x="414" y="223" width="144" height="40" rx="3" fill="#1a1c20" stroke="#3a3d44" stroke-width="1"/>
+        <text x="486" y="243" font-size="10" fill="#e8dcc8" text-anchor="middle">block_count</text>
+        <text x="486" y="255" font-size="8" fill="#5a5249" text-anchor="middle">u32</text>
+
+        <!-- id [14-15] - 2 bytes, 72 wide -->
+        <rect x="558" y="223" width="72" height="40" rx="3" fill="#16181c" stroke="#5a5249" stroke-width="1"/>
+        <text x="594" y="243" font-size="10" fill="#e8dcc8" text-anchor="middle">id</text>
+        <text x="594" y="255" font-size="8" fill="#5a5249" text-anchor="middle">PAGEID</text>
+
+        <!-- project_id [16-17] - 2 bytes, 72 wide -->
+        <rect x="630" y="223" width="72" height="40" rx="3" fill="#16181c" stroke="#5a5249" stroke-width="1"/>
+        <text x="666" y="243" font-size="10" fill="#e8dcc8" text-anchor="middle">proj_id</text>
+        <text x="666" y="255" font-size="8" fill="#5a5249" text-anchor="middle">PROJECTID</text>
+
+        <!-- created_at [18-19] - 2 bytes, 72 wide -->
+        <rect x="702" y="223" width="72" height="40" rx="3" fill="#1c1a16" stroke="url(#acc-rec)" stroke-width="1" opacity="0.8"/>
+        <text x="738" y="243" font-size="10" fill="#e8dcc8" text-anchor="middle">created</text>
+        <text x="738" y="255" font-size="8" fill="#c89858" text-anchor="middle">i16 tiered</text>
+
+        <!-- updated_at [20-21] - 2 bytes, 72 wide -->
+        <rect x="774" y="223" width="72" height="40" rx="3" fill="#1c1a16" stroke="url(#acc-rec)" stroke-width="1" opacity="0.8"/>
+        <text x="810" y="243" font-size="10" fill="#e8dcc8" text-anchor="middle">updated</text>
+        <text x="810" y="255" font-size="8" fill="#c89858" text-anchor="middle">i16 tiered</text>
+    </g>
+
+    <line x1="40" y1="285" x2="860" y2="285" stroke="#2a2d34" stroke-width="0.5"/>
+
+    <!-- ═══════════════════════════════════════════════
+         Block — 12 bytes
+         ═══════════════════════════════════════════════ -->
+    <g font-family="JetBrains Mono, monospace">
+        <text x="40" y="310" font-size="13" fill="#e8dcc8" font-weight="500">Block</text>
+        <text x="90" y="310" font-size="10" fill="url(#acc-rec)">12 bytes</text>
+
+        <!-- 12 bytes, 50px each across 600px starting at x=50 -->
+        <g font-size="8" fill="#3a3d44" text-anchor="middle">
+            <text x="75"  y="330">00</text>
+            <text x="125" y="330">01</text>
+            <text x="175" y="330">02</text>
+            <text x="225" y="330">03</text>
+            <text x="275" y="330">04</text>
+            <text x="325" y="330">05</text>
+            <text x="375" y="330">06</text>
+            <text x="425" y="330">07</text>
+            <text x="475" y="330">08</text>
+            <text x="525" y="330">09</text>
+            <text x="575" y="330">0A</text>
+            <text x="625" y="330">0B</text>
+        </g>
+
+        <!-- content_offset [0-3] - 4 bytes -->
+        <rect x="50" y="338" width="200" height="32" rx="3" fill="#1a1c20" stroke="#3a3d44" stroke-width="1"/>
+        <text x="150" y="358" font-size="10" fill="#e8dcc8" text-anchor="middle">content_offset · u32</text>
+
+        <!-- content_length [4-5] - 2 bytes -->
+        <rect x="250" y="338" width="100" height="32" rx="3" fill="#16181c" stroke="#5a5249" stroke-width="1"/>
+        <text x="300" y="358" font-size="10" fill="#e8dcc8" text-anchor="middle">length · u16</text>
+
+        <!-- page_id [6-7] - 2 bytes -->
+        <rect x="350" y="338" width="100" height="32" rx="3" fill="#16181c" stroke="#5a5249" stroke-width="1"/>
+        <text x="400" y="358" font-size="10" fill="#e8dcc8" text-anchor="middle">page_id · u16</text>
+
+        <!-- timestamp [8-9] - 2 bytes -->
+        <rect x="450" y="338" width="100" height="32" rx="3" fill="#1c1a16" stroke="url(#acc-rec)" stroke-width="1" opacity="0.8"/>
+        <text x="500" y="358" font-size="10" fill="#e8dcc8" text-anchor="middle">timestamp · i16</text>
+
+        <!-- annotation_count [10] - 1 byte -->
+        <rect x="550" y="338" width="50" height="32" rx="3" fill="#16181c" stroke="#5a5249" stroke-width="1"/>
+        <text x="575" y="358" font-size="9" fill="#e8dcc8" text-anchor="middle">ann</text>
+
+        <!-- header [11] - 1 byte, bit-packed -->
+        <rect x="600" y="338" width="50" height="32" rx="3" fill="#16181c" stroke="url(#acc-rec)" stroke-width="1"/>
+        <text x="625" y="358" font-size="9" fill="#c89858" text-anchor="middle">hdr</text>
+    </g>
+</svg>
