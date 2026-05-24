@@ -1,0 +1,29 @@
+# Pre-baked CI environment for Axylith.
+# Includes all build deps so workflow runs skip apt-get install entirely.
+# Rebuilt only when this file changes.
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        build-essential \
+        gcc-12 g++-12 \
+        gcc-13 g++-13 \
+        clang-17 \
+        cmake \
+        ninja-build \
+        git \
+        ccache \
+        libvulkan-dev \
+        vulkan-validationlayers \
+        libx11-dev \
+        libxext-dev \
+        libwayland-dev \
+        wayland-protocols \
+        glslc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Cache layer for ccache directory; workflows mount their own cache over it
+RUN mkdir -p /ccache && chmod 777 /ccache
+ENV CCACHE_DIR=/ccache

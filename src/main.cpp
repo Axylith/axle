@@ -1,6 +1,6 @@
-#include "types.h"
+#include "core/types.h"
 #include "window.h"
-#include "monitor.h"
+#include "core/monitor.h"
 #include "vulkan_init.h"
 #include "swapchain.h"
 #include "font.h"
@@ -13,7 +13,7 @@
 #include <thread>
 #include <csetjmp>
 #include "editor.h"
-#include "metrics.h"
+#include "core/metrics.h"
 #include <clocale>
 #include <sys/select.h>
 #include <sys/stat.h>
