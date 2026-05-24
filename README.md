@@ -3,13 +3,11 @@
 </p>
 
 <p align="center">
-  <a href="https://docs.axylith.com"><b>Documentation</b></a>
   &nbsp;·&nbsp;
-  <a href="docs/FORMAT.MD"><b>File Format</b></a>
+  <a href="docs/FORMAT.md"><b>File Format</b></a>
   &nbsp;·&nbsp;
   <a href="changelog.md"><b>Roadmap</b></a>
   &nbsp;·&nbsp;
-  <a href="manifesto.md"><b>Manifesto</b></a>
 </p>
 
 <p align="center">
@@ -150,7 +148,7 @@ These are choices about what kind of tool Axylith should be. They reflect tradeo
 
 ## File format
 
-`.axl` is a 16-byte header followed by raw UTF-8 content. Files without the header are loaded as plain text. Full spec in [docs/FORMAT](docs/FORMAT.MD).
+`.axl` is a 16-byte header followed by raw UTF-8 content. Files without the header are loaded as plain text. Full spec in [docs/FORMAT](docs/FORMAT.md).
 
 ```
 $ od -An -tx1 -N 16 untitled.axl
