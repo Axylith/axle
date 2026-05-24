@@ -20,7 +20,7 @@
 </p>
 
 ---
-
+ 
 ## The idea
 
 Axylith is one native binary where prose, code, data, and 3D geometry share state, with an integrated AI that can reason about all of them &mdash; not as separate tools talking through a clipboard, but as a single surface.
