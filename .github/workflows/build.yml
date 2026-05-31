@@ -127,7 +127,7 @@ jobs:
       container:
         image: ghcr.io/axylith/axylith-ci:latest
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v6
 
         - name: Install valgrind
           run: |
