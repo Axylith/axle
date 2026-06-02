@@ -55,7 +55,7 @@ jobs:
           sha256sum axylith-*-linux-x86_64 > axylith-${GITHUB_REF#refs/tags/}-linux-x86_64.sha256
 
       - name: Publish release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             ${{ steps.artifact.outputs.path }}
