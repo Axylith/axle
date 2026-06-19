@@ -40,7 +40,7 @@ jobs:
         build_type: [Debug, Release, RelWithDebInfo]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up ccache
         uses: hendrikmuhs/ccache-action@v1.2
@@ -89,7 +89,7 @@ jobs:
             flags: "-fsanitize=thread -fno-omit-frame-pointer -g"
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up ccache
         uses: hendrikmuhs/ccache-action@v1.2
@@ -127,7 +127,7 @@ jobs:
       container:
         image: ghcr.io/axylith/axylith-ci:latest
       steps:
-        - uses: actions/checkout@v6
+        - uses: actions/checkout@v7
 
         - name: Install valgrind
           run: |
